@@ -291,6 +291,7 @@ next_diagram:
 	tbf->direction = dir;
 	tbf->tfi = tfi;
 	tbf->trx_no = trx;
+	tbf->trx = &bts->trx[trx];
 	tbf->arfcn = bts->trx[trx].arfcn;
 	tbf->ms_class = ms_class;
 	tbf->ws = 64;
@@ -333,12 +334,11 @@ next_diagram:
 
 static void tbf_unlink_pdch(struct gprs_rlcmac_tbf *tbf)
 {
-	struct gprs_rlcmac_bts *bts = gprs_rlcmac_bts;
 	struct gprs_rlcmac_pdch *pdch;
 	int ts;
 
 	if (tbf->direction == GPRS_RLCMAC_UL_TBF) {
-		bts->trx[tbf->trx_no].ul_tbf[tbf->tfi] = NULL;
+		tbf->trx->ul_tbf[tbf->tfi] = NULL;
 		for (ts = 0; ts < 8; ts++) {
 			pdch = tbf->pdch[ts];
 			if (pdch)
@@ -346,7 +346,7 @@ static void tbf_unlink_pdch(struct gprs_rlcmac_tbf *tbf)
 			tbf->pdch[ts] = NULL;
 		}
 	} else {
-		bts->trx[tbf->trx_no].dl_tbf[tbf->tfi] = NULL;
+		tbf->trx->dl_tbf[tbf->tfi] = NULL;
 		for (ts = 0; ts < 8; ts++) {
 			pdch = tbf->pdch[ts];
 			if (pdch)

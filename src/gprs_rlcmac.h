@@ -155,6 +155,8 @@ enum gprs_rlcmac_tbf_direction {
 #define GPRS_RLCMAC_FLAG_TO_DL_ASS	7
 #define GPRS_RLCMAC_FLAG_TO_MASK	0xf0 /* timeout bits */
 
+struct gprs_rlcmac_trx;
+
 struct gprs_rlcmac_tbf {
 	struct llist_head list;
 	enum gprs_rlcmac_tbf_state state;
@@ -163,6 +165,7 @@ struct gprs_rlcmac_tbf {
 	uint8_t tfi;
 	uint32_t tlli;
 	uint8_t tlli_valid;
+	struct gprs_rlcmac_trx *trx;
 	uint8_t trx_no;
 	uint16_t arfcn;
 	uint8_t tsc;
