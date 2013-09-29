@@ -102,7 +102,7 @@ static void assign_uplink_tbf_usf(struct gprs_rlcmac_bts *bts,
 				int ts,
 				struct gprs_rlcmac_tbf *tbf, int8_t usf)
 {
-	bts->trx[tbf->trx].ul_tbf[tbf->tfi] = tbf;
+	bts->trx[tbf->trx_no].ul_tbf[tbf->tfi] = tbf;
 	pdch->ul_tbf[tbf->tfi] = tbf;
 	tbf->pdch[ts] = pdch;
 	tbf->dir.ul.usf[ts] = usf;
@@ -125,7 +125,7 @@ int alloc_algorithm_a(struct gprs_rlcmac_bts *bts,
 		"%d\n", tbf->ms_class);
 
 	for (ts = 0; ts < 8; ts++) {
-		pdch = &bts->trx[tbf->trx].pdch[ts];
+		pdch = &bts->trx[tbf->trx_no].pdch[ts];
 		if (!pdch->enable) {
 			LOGP(DRLCMAC, LOGL_DEBUG, "- Skipping TS %d, because "
 				"not enabled\n", ts);
@@ -150,7 +150,7 @@ int alloc_algorithm_a(struct gprs_rlcmac_bts *bts,
 		assign_uplink_tbf_usf(bts, pdch, ts, tbf, usf);
 	} else {
 		LOGP(DRLCMAC, LOGL_DEBUG, "- Assign downlink TS=%d\n", ts);
-		bts->trx[tbf->trx].dl_tbf[tbf->tfi] = tbf;
+		bts->trx[tbf->trx_no].dl_tbf[tbf->tfi] = tbf;
 		pdch->dl_tbf[tbf->tfi] = tbf;
 		tbf->pdch[ts] = pdch;
 	}
@@ -279,7 +279,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 	 * This must be done for uplink TBF also, because it is the basis
 	 * for calculating control slot and uplink slot(s). */
 	for (ts = 0, i = 0; ts < 8; ts++) {
-		pdch = &bts->trx[tbf->trx].pdch[ts];
+		pdch = &bts->trx[tbf->trx_no].pdch[ts];
 		/* check if enabled */
 		if (!pdch->enable) {
 			LOGP(DRLCMAC, LOGL_DEBUG, "- Skipping TS %d, because "
@@ -297,7 +297,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 				"because it has different TSC than lower TS "
 				"of TRX. In order to allow multislot, all "
 				"slots must be configured with the same "
-				"TSC!\n", ts, tbf->trx);
+				"TSC!\n", ts, tbf->trx_no);
 			/* increase window for Type 1 */
 			if (Type == 1 && rx_window)
 				i++;
@@ -435,7 +435,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 	 * slot. */
 	if (tbf->direction == GPRS_RLCMAC_UL_TBF) {
 		for (ts = tx_win_min, i = 0; i < tx_range; ts = (ts + 1) & 7) {
-			pdch = &bts->trx[tbf->trx].pdch[ts];
+			pdch = &bts->trx[tbf->trx_no].pdch[ts];
 			/* check if enabled */
 			if (!pdch->enable) {
 				LOGP(DRLCMAC, LOGL_DEBUG, "- Skipping TS %d, "
@@ -451,7 +451,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 					"than lower TS of TRX. In order to "
 					"allow multislot, all slots must be "
 					"configured with the same TSC!\n",
-					ts, tbf->trx);
+					ts, tbf->trx_no);
 				/* increase window for Type 1 */
 				if (Type == 1)
 					i++;
@@ -507,7 +507,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 		/* assign the first common ts, which is used for control or
 		 * single slot. */
 		for (ts = tx_win_min, i = 0; i < tx_range; ts = (ts + 1) & 7) {
-			pdch = &bts->trx[tbf->trx].pdch[ts];
+			pdch = &bts->trx[tbf->trx_no].pdch[ts];
 			/* check if enabled */
 			if (!pdch->enable) {
 				LOGP(DRLCMAC, LOGL_DEBUG, "- Skipping TS %d, "
@@ -540,8 +540,8 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 					continue;
 				LOGP(DRLCMAC, LOGL_DEBUG, "- Assigning DL TS "
 					"%d\n", ts);
-				pdch = &bts->trx[tbf->trx].pdch[ts];
-				bts->trx[tbf->trx].dl_tbf[tbf->tfi] = tbf;
+				pdch = &bts->trx[tbf->trx_no].pdch[ts];
+				bts->trx[tbf->trx_no].dl_tbf[tbf->tfi] = tbf;
 				pdch->dl_tbf[tbf->tfi] = tbf;
 				tbf->pdch[ts] = pdch;
 				slotcount++;
@@ -562,7 +562,7 @@ int alloc_algorithm_b(struct gprs_rlcmac_bts *bts,
 			if ((tx_window & (1 << ts))) {
 				LOGP(DRLCMAC, LOGL_DEBUG, "- Assigning UL TS "
 					"%d\n", ts);
-				pdch = &bts->trx[tbf->trx].pdch[ts];
+				pdch = &bts->trx[tbf->trx_no].pdch[ts];
 				assign_uplink_tbf_usf(bts, pdch, ts, tbf, usf[ts]);
 				slotcount++;
 				if (slotcount == 1)

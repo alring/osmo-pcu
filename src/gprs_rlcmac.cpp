@@ -233,14 +233,14 @@ struct gprs_rlcmac_tbf *tbf_by_poll_fn(uint32_t fn, uint8_t trx, uint8_t ts)
 	llist_for_each_entry(tbf, &gprs_rlcmac_ul_tbfs, list) {
 		if (tbf->state != GPRS_RLCMAC_RELEASING
 		 && tbf->poll_state == GPRS_RLCMAC_POLL_SCHED
-		 && tbf->poll_fn == fn && tbf->trx == trx
+		 && tbf->poll_fn == fn && tbf->trx_no == trx
 		 && tbf->control_ts == ts)
 			return tbf;
 	}
 	llist_for_each_entry(tbf, &gprs_rlcmac_dl_tbfs, list) {
 		if (tbf->state != GPRS_RLCMAC_RELEASING
 		 && tbf->poll_state == GPRS_RLCMAC_POLL_SCHED
-		 && tbf->poll_fn == fn && tbf->trx == trx
+		 && tbf->poll_fn == fn && tbf->trx_no == trx
 		 && tbf->control_ts == ts)
 			return tbf;
 	}
@@ -290,7 +290,7 @@ next_diagram:
 #endif
 	tbf->direction = dir;
 	tbf->tfi = tfi;
-	tbf->trx = trx;
+	tbf->trx_no = trx;
 	tbf->arfcn = bts->trx[trx].arfcn;
 	tbf->ms_class = ms_class;
 	tbf->ws = 64;
@@ -338,7 +338,7 @@ static void tbf_unlink_pdch(struct gprs_rlcmac_tbf *tbf)
 	int ts;
 
 	if (tbf->direction == GPRS_RLCMAC_UL_TBF) {
-		bts->trx[tbf->trx].ul_tbf[tbf->tfi] = NULL;
+		bts->trx[tbf->trx_no].ul_tbf[tbf->tfi] = NULL;
 		for (ts = 0; ts < 8; ts++) {
 			pdch = tbf->pdch[ts];
 			if (pdch)
@@ -346,7 +346,7 @@ static void tbf_unlink_pdch(struct gprs_rlcmac_tbf *tbf)
 			tbf->pdch[ts] = NULL;
 		}
 	} else {
-		bts->trx[tbf->trx].dl_tbf[tbf->tfi] = NULL;
+		bts->trx[tbf->trx_no].dl_tbf[tbf->tfi] = NULL;
 		for (ts = 0; ts < 8; ts++) {
 			pdch = tbf->pdch[ts];
 			if (pdch)
@@ -652,7 +652,7 @@ int gprs_rlcmac_add_paging(uint8_t chan_needed, uint8_t *identity_lv)
 					if (first_ts < 0)
 						first_ts = ts;
 					/* break, if we already marked a slot */
-					if ((slot_mask[tbf->trx] & (1 << ts)))
+					if ((slot_mask[tbf->trx_no] & (1 << ts)))
 						break;
 				}
 			}
@@ -662,14 +662,14 @@ int gprs_rlcmac_add_paging(uint8_t chan_needed, uint8_t *identity_lv)
 					"TRX=%d TS=%d, so we mark\n",
 					(tbf->direction == GPRS_RLCMAC_UL_TBF)
 						? "UL" : "DL",
-					tbf->tfi, tbf->trx, first_ts);
-				slot_mask[tbf->trx] |= (1 << first_ts);
+					tbf->tfi, tbf->trx_no, first_ts);
+				slot_mask[tbf->trx_no] |= (1 << first_ts);
 			} else
 				LOGP(DRLCMAC, LOGL_DEBUG, "- %s TBF=%d uses "
 					"already marked TRX=%d TS=%d\n",
 					(tbf->direction == GPRS_RLCMAC_UL_TBF)
 						? "UL" : "DL",
-					tbf->tfi, tbf->trx, ts);
+					tbf->tfi, tbf->trx_no, ts);
 		}
 	}
 

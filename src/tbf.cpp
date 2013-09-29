@@ -120,7 +120,7 @@ static int tbf_new_dl_assignment(struct gprs_rlcmac_bts *bts,
 	tbf = tbf_by_tlli(tlli, GPRS_RLCMAC_UL_TBF);
 	if (tbf && tbf->dir.ul.contention_resolution_done
 	 && !tbf->dir.ul.final_ack_sent) {
-		use_trx = tbf->trx;
+		use_trx = tbf->trx_no;
 		ta = tbf->ta;
 		ss = 0;
 		old_tbf = tbf;
