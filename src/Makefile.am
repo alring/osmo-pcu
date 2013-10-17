@@ -42,7 +42,8 @@ libgprs_la_SOURCES = \
 	bitvector.cpp \
 	pcu_l1_if.cpp \
 	pcu_vty.c \
-	tbf.cpp
+	tbf.cpp \
+	bts.cpp
 
 if ENABLE_SYSMOBTS
 libgprs_la_SOURCES += \
@@ -76,7 +77,8 @@ noinst_HEADERS = \
 	sysmo_l1_if.h \
 	femtobts.h \
 	tbf.h \
-	bts.h
+	bts.h \
+	poll_controller.h
 
 osmo_pcu_SOURCES = pcu_main.cpp
 

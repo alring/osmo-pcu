@@ -33,7 +33,6 @@ extern "C" {
 
 /* globals used by the code */
 void *tall_pcu_ctx;
-struct gprs_rlcmac_bts *gprs_rlcmac_bts;
 int16_t spoof_mnc = 0, spoof_mcc = 0;
 
 static void test_alloc_a(gprs_rlcmac_tbf_direction dir, const int count)
