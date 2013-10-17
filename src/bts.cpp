@@ -39,6 +39,12 @@ struct gprs_rlcmac_bts *bts_main_data()
 }
 
 BTS::BTS()
+	: m_cur_fn(0)
 {
 	memset(&m_bts, 0, sizeof(m_bts));
+}
+
+void BTS::set_current_frame_number(int fn)
+{
+	m_cur_fn = fn;
 }
