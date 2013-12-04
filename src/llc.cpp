@@ -77,9 +77,29 @@ void gprs_llc::init()
 	reset();
 }
 
+#define ALPHA 0.5f
+
 struct msgb *gprs_llc::dequeue()
 {
-	return msgb_dequeue(&queue);
+	struct msgb *msg;
+	struct timeval *tv, tv_now, tv_result;
+	uint32_t lifetime;
+
+	gettimeofday(&tv_now, NULL);
+
+	msg = msgb_dequeue(&queue);
+	if (!msg)
+		return NULL;
+
+	tv = (struct timeval *)&msg->data[sizeof(*tv)];
+	timersub(&tv_now, tv, &tv_result);
+
+	lifetime = tv_result.tv_sec*1000 + tv_result.tv_usec/1000;
+
+	m_avg_queue_delay = m_avg_queue_delay * ALPHA + lifetime * (1-ALPHA);
+	printf("m_avg_queue_delay = %u\n", m_avg_queue_delay);
+
+	return msg;
 }
 
 

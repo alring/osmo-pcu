@@ -54,6 +54,7 @@ struct gprs_llc {
 	uint16_t m_index; /* current write/read position of frame */
 	uint16_t m_length; /* len of current DL LLC_frame, 0 == no frame */
 	struct llist_head queue; /* queued LLC DL data */
+	uint32_t m_avg_queue_delay; /* Average delay of data going through the queue */
 };
 
 inline uint16_t gprs_llc::chunk_size() const
